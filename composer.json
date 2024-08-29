@@ -1,0 +1,32 @@
+{
+	"name": "gjo-se/gjo-api",
+	"type": "typo3-cms-extension",
+	"description": "Gjo API wrapper for TYPO3 API",
+	"authors": [
+		{
+			"name": "Gregory Jo Erdmann",
+			"email": "gregory.jo@gjo-se.com",
+			"homepage": "https://www.gjo-se.com",
+			"role": "maintainer"
+		}
+	],
+	"license": ["GPL-2.0-or-later"],
+	"require": {
+		"php": "^8.3",
+		"typo3/cms-core": "^12.4"
+	},
+	"require-dev": {
+	},
+	"conflict": {
+	},
+	"autoload": {
+		"psr-4": {
+			"GjoSe\\GjoApi\\": "Classes/"
+		}
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "gjo_api"
+		}
+	}
+}
