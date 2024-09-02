@@ -37,7 +37,7 @@ final class DatabaseBackupService extends AbstractDatabaseService implements Sin
             '-h' . $this->getDbHost(),
             $this->getDbName(),
             self::DUMP_PARAMS_COMPLETE,
-            $this->getIgnoredTables(),
+            $this->getIgnoredMergedTablesString(),
             '> ' . EnvironmentUtility::getProjectPath() . '/' . $this->getBackupPathName() . '/' . $this->getBackupFileName(),
         ];
 
@@ -62,7 +62,6 @@ final class DatabaseBackupService extends AbstractDatabaseService implements Sin
     private function getBackupFileName(): string
     {
         return parent::BACKUP_FILE_PREFIX . $this->getDbSourceAndDbTargetName() . '_' . $this->getBackupDateTime() . parent::BACKUP_FILE_EXTENSION;
-
     }
 
     private function getBackupDateTime(): string
@@ -70,24 +69,11 @@ final class DatabaseBackupService extends AbstractDatabaseService implements Sin
         return date(parent::DATE_FORMAT);
     }
 
-    private function getIgnoredTables(): string
+    private function getIgnoredMergedTablesString(): string
     {
-        $sourceTargetMap = [
-            'Development-Development' => DatabaseIgnoredTables::getIgnoredTablesDevelopmentForDevelopment(),
-            'Development-Testing' => DatabaseIgnoredTables::getIgnoredTablesDevelopmentForTesting(),
-            'Testing-Testing' => DatabaseIgnoredTables::getIgnoredTablesTestingForTesting(),
-            'Testing-Development' => DatabaseIgnoredTables::getIgnoredTablesTestingForDevelopment(),
-            'Testing-Production' => DatabaseIgnoredTables::getIgnoredTablesTestingForProduction(),
-            'Production-Production' => DatabaseIgnoredTables::getIgnoredTablesProductionForProduction(),
-            'Production-Development' => DatabaseIgnoredTables::getIgnoredTablesProductionForDevelopment(),
-        ];
-
-        $key = $this->getDbSource() . '-' . $this->getDbTarget();
-        $ignoredTables = $sourceTargetMap[$key] ?? [];
-
         $ignoredTablesArr = array_map(function (string $ignoredTable): string {
             return '--ignore-table=' . $this->getDbName() . '.' . $ignoredTable;
-        }, $ignoredTables);
+        }, DatabaseIgnoredTables::getIgnoredMergedTables($this->getDbSource(), $this->getDbTarget()));
 
         return implode(' ', $ignoredTablesArr);
     }

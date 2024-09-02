@@ -38,8 +38,7 @@ abstract class DatabaseIgnoredTables
      */
     public static function getIgnoredTablesDevelopmentForDevelopment(): array
     {
-        $ignoredTablesDevelopmentForDevelopment = [];
-        return array_merge($ignoredTablesDevelopmentForDevelopment, self::getIgnoredTablesDefault());
+        return [];
     }
 
     /**
@@ -47,8 +46,7 @@ abstract class DatabaseIgnoredTables
      */
     public static function getIgnoredTablesDevelopmentForTesting(): array
     {
-        $ignoredTablesDevelopmentForTesting = [];
-        return array_merge($ignoredTablesDevelopmentForTesting, self::getIgnoredTablesDefault());
+        return [];
     }
 
     /**
@@ -57,8 +55,7 @@ abstract class DatabaseIgnoredTables
      */
     public static function getIgnoredTablesTestingForTesting(): array
     {
-        $ignoredTablesTestingForTesting = [];
-        return array_merge($ignoredTablesTestingForTesting, self::getIgnoredTablesDefault());
+        return [];
     }
 
     /**
@@ -67,12 +64,10 @@ abstract class DatabaseIgnoredTables
      */
     public static function getIgnoredTablesTestingForDevelopment(): array
     {
-        $ignoredTablesTestingForDevelopment = [
+        return [
             'sys_history',
             'sys_log',
         ];
-
-        return array_merge($ignoredTablesTestingForDevelopment, self::getIgnoredTablesDefault());
     }
 
     /**
@@ -81,7 +76,7 @@ abstract class DatabaseIgnoredTables
      */
     public static function getIgnoredTablesTestingForProduction(): array
     {
-        $ignoredTablesTestingForProduction = [
+        return [
             'fe_groups',
             'fe_users',
             'be_groups',
@@ -91,8 +86,6 @@ abstract class DatabaseIgnoredTables
             'sys_history',
             'sys_log',
         ];
-
-        return array_merge($ignoredTablesTestingForProduction, self::getIgnoredTablesDefault());
     }
 
     /**
@@ -100,9 +93,7 @@ abstract class DatabaseIgnoredTables
      */
     public static function getIgnoredTablesProductionForProduction(): array
     {
-        $ignoredTablesProductionForBackup = [];
-        return array_merge($ignoredTablesProductionForBackup, self::getIgnoredTablesDefault());
-
+        return [];
     }
 
     /**
@@ -110,7 +101,26 @@ abstract class DatabaseIgnoredTables
      */
     public static function getIgnoredTablesProductionForDevelopment(): array
     {
-        $ignoredTablesProductionForDevelopment = [];
-        return array_merge($ignoredTablesProductionForDevelopment, self::getIgnoredTablesDefault());
+        return [];
+    }
+
+    private static function getSourceTargetMergedWithDefaultMap(): array
+    {
+        return [
+            'Development-Development' => array_merge(self::getIgnoredTablesDevelopmentForDevelopment(), self::getIgnoredTablesDefault()),
+            'Development-Testing' => array_merge(self::getIgnoredTablesDevelopmentForTesting(), self::getIgnoredTablesDefault()),
+            'Testing-Testing' => array_merge(self::getIgnoredTablesTestingForTesting(), self::getIgnoredTablesDefault()),
+            'Testing-Development' => array_merge(self::getIgnoredTablesTestingForDevelopment(), self::getIgnoredTablesDefault()),
+            'Testing-Production' => array_merge(self::getIgnoredTablesTestingForProduction(), self::getIgnoredTablesDefault()),
+            'Production-Production' => array_merge(self::getIgnoredTablesProductionForProduction(), self::getIgnoredTablesDefault()),
+            'Production-Development' => array_merge(self::getIgnoredTablesProductionForDevelopment(), self::getIgnoredTablesDefault()),
+        ];
+    }
+
+    public static function getIgnoredMergedTables(string $dbSource, string $dbTarget): array
+    {
+        $sourceTargetMergedWithDefaultMap = self::getSourceTargetMergedWithDefaultMap();
+        $key = $dbSource . '-' . $dbTarget;
+        return $sourceTargetMergedWithDefaultMap[$key] ?? [];
     }
 }
