@@ -10,7 +10,7 @@ use GjoSe\GjoApi\Utility\EnvironmentUtility;
 use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\SingletonInterface;
 
-final class DatabaseBackupService extends AbstractDatabaseService implements SingletonInterface
+final class BackupDatabaseService extends AbstractDatabaseService implements SingletonInterface
 {
     private const string DUMP_PARAMS_COMPLETE = '--opt --single-transaction';
 
@@ -73,7 +73,7 @@ final class DatabaseBackupService extends AbstractDatabaseService implements Sin
     {
         $ignoredTablesArr = array_map(function (string $ignoredTable): string {
             return '--ignore-table=' . $this->getDbName() . '.' . $ignoredTable;
-        }, DatabaseIgnoredTables::getIgnoredMergedTables($this->getDbSource(), $this->getDbTarget()));
+        }, IgnoredTablesService::getIgnoredMergedTables($this->getDbSource(), $this->getDbTarget()));
 
         return implode(' ', $ignoredTablesArr);
     }

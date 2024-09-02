@@ -26,4 +26,9 @@ final class FileService
     {
         return file_exists($src);
     }
+
+    public static function getFileBaseName(string $path): string
+    {
+        return basename($path);
+    }
 }

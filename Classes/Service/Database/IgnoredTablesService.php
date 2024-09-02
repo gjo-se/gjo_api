@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GjoSe\GjoApi\Service\Database;
 
-abstract class DatabaseIgnoredTables
+abstract class IgnoredTablesService
 {
     /**
      * @return array<string>
